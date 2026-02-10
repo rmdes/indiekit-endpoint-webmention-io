@@ -139,7 +139,7 @@
   <div class="wm-actions-bar">
     <span class="wm-sync-info">
       {% if syncState.lastSync %}
-        {{ __("webmention-io.sync.lastSync") }}: {{ syncState.lastSync }}
+        {{ __("webmention-io.sync.lastSync") }}: {{ syncState.lastSync | date("PPp") }}
       {% else %}
         {{ __("webmention-io.sync.never") }}
       {% endif %}
