@@ -158,7 +158,7 @@
           </span>
         </td>
         <td>{{ entry.mentionsHidden or 0 }}</td>
-        <td>{{ entry.blockedAt | date("PPp") }}</td>
+        <td>{% if entry.blockedAt %}{{ entry.blockedAt | date("PPp") }}{% endif %}</td>
         <td>
           <form method="post" action="{{ wmEndpoint }}/blocklist/{{ entry.domain | urlencode }}/delete" style="display:inline">
             <button type="submit" class="button button--small button--secondary"
