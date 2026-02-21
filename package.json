@@ -1,6 +1,6 @@
 {
   "name": "@rmdes/indiekit-endpoint-webmention-io",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Webmention moderation endpoint for Indiekit. Syncs webmentions from webmention.io into MongoDB with delete, block, and privacy removal capabilities.",
   "keywords": [
     "indiekit",
