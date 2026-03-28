@@ -7,6 +7,7 @@ import { blocklistController } from "./lib/controllers/blocklist.js";
 import { syncController } from "./lib/controllers/sync-controller.js";
 import { apiController } from "./lib/controllers/api.js";
 import { startSync, stopSync } from "./lib/sync.js";
+import { waitForReady } from "@rmdes/indiekit-startup-gate";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -103,11 +104,15 @@ export default class WebmentionEndpoint {
 
     // Start background sync if database is available
     if (Indiekit.config.application.mongodbUrl) {
-      startSync(Indiekit, this.options);
+      this._stopGate = waitForReady(
+        () => startSync(Indiekit, this.options),
+        { label: "Webmention.io" },
+      );
     }
   }
 
   destroy() {
+    this._stopGate?.();
     stopSync();
   }
 }
