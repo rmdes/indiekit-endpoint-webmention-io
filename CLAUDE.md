@@ -456,6 +456,15 @@ db.webmentions.find({ published: null })
 - `indiekit/packages/endpoint-webmention-io/` - Upstream Indiekit (different plugin)
 - `indiekit-cloudron/node_modules/@rmdes/indiekit-endpoint-webmention-io/` - Installed copy (read-only)
 
+## Startup Gate
+
+This plugin uses `@rmdes/indiekit-startup-gate` to defer background tasks until the host signals readiness (after Eleventy build completes). This prevents resource contention during the build.
+
+**Deferred:** `startSync()` — periodic webmention.io sync
+**Immediate:** Routes, indexes, collection registration
+
+See workspace CLAUDE.md for the full startup-gate pattern. Any new background tasks added to this plugin MUST be wrapped in `waitForReady()`.
+
 ## Publishing Workflow
 
 1. Edit code in this repo
