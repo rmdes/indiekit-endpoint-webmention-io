@@ -8,6 +8,7 @@ import { syncController } from "./lib/controllers/sync-controller.js";
 import { apiController } from "./lib/controllers/api.js";
 import { startSync, stopSync } from "./lib/sync.js";
 import { waitForReady } from "@rmdes/indiekit-startup-gate";
+import { WEBMENTION_BLOCKS } from "./lib/blocks.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -42,6 +43,10 @@ export default class WebmentionEndpoint {
       text: "webmention-io.title",
       requiresDatabase: true,
     };
+  }
+
+  get blocks() {
+    return WEBMENTION_BLOCKS;
   }
 
   /**
