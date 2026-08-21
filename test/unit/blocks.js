@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { WEBMENTION_BLOCKS } from "../lib/blocks.js";
+import { WEBMENTION_BLOCKS } from "../../lib/blocks.js";
 
 // Phase 7b — webmention-io v2 `get blocks()`. Assertions replicate the invariants
 // of site-config's `validBlockEntry` (lib/discovery/block-entry.js); the canonical
