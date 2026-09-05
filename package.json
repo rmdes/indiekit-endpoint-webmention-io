@@ -23,7 +23,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=20"
+    "node": ">=24.17"
   },
   "type": "module",
   "main": "index.js",
@@ -37,11 +37,9 @@
     "index.js"
   ],
   "dependencies": {
-    "@indiekit/error": "^1.0.0-beta.25",
-    "@indiekit/frontend": "^1.0.0-beta.25",
-    "@rmdes/indiekit-startup-gate": "^1.0.0",
-    "express": "^5.0.0",
-    "sanitize-html": "^2.14.0"
+    "@indiekit/error": "^1.0.0-beta.28",
+    "express": "^5.2.1",
+    "sanitize-html": "^2.17.7"
   },
   "peerDependencies": {
     "@indiekit/indiekit": ">=1.0.0-beta.25"

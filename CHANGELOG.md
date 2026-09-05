@@ -1,0 +1,57 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+# [1.0.0-beta.29](https://github.com/getindiekit/indiekit/compare/v1.0.0-beta.28...v1.0.0-beta.29) (2026-08-16)
+
+**Note:** Version bump only for package @indiekit/endpoint-webmention-io
+
+
+
+
+
+# [1.0.0-beta.28](https://github.com/getindiekit/indiekit/compare/v1.0.0-beta.27...v1.0.0-beta.28) (2026-07-04)
+
+**Note:** Version bump only for package @indiekit/endpoint-webmention-io
+
+
+
+
+
+# [1.0.0-beta.27](https://github.com/getindiekit/indiekit/compare/v1.0.0-beta.26...v1.0.0-beta.27) (2026-03-07)
+
+**Note:** Version bump only for package @indiekit/endpoint-webmention-io
+
+
+
+
+
+# [1.0.0-beta.25](https://github.com/getindiekit/indiekit/compare/v1.0.0-beta.24...v1.0.0-beta.25) (2025-12-24)
+
+
+### Features
+
+* add Brazilian Portuguese localisation from Bruno Pulis ([bd86503](https://github.com/getindiekit/indiekit/commit/bd86503da1970b7276b277c077cb2e2161f4e5c8))
+
+
+
+
+
+# [1.0.0-beta.21](https://github.com/getindiekit/indiekit/compare/v1.0.0-beta.20...v1.0.0-beta.21) (2025-04-13)
+
+
+### Features
+
+* add Italian localisation ([8204b7d](https://github.com/getindiekit/indiekit/commit/8204b7dca75ed747d0851fa9c283057c51da5186))
+
+
+
+
+
+# [1.0.0-beta.20](https://github.com/getindiekit/indiekit/compare/v1.0.0-beta.19...v1.0.0-beta.20) (2025-03-29)
+
+
+### Features
+
+* **endpoint-webmention-io:** webmention.io endpoint ([9ceb623](https://github.com/getindiekit/indiekit/commit/9ceb6230efc180c24891567b3e1a4f382fb71f64))
