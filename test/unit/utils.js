@@ -104,8 +104,14 @@ describe("endpoint-webmention-io/lib/utils", () => {
   });
 
   it("Extracts the domain from a URL", () => {
-    assert.equal(extractDomain("https://alice.example/notes/1"), "alice.example");
-    assert.equal(extractDomain("http://sub.alice.example/"), "sub.alice.example");
+    assert.equal(
+      extractDomain("https://alice.example/notes/1"),
+      "alice.example",
+    );
+    assert.equal(
+      extractDomain("http://sub.alice.example/"),
+      "sub.alice.example",
+    );
   });
 
   it("Returns null rather than throwing on a value that is not a URL", () => {

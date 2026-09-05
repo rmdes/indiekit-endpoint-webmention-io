@@ -22,7 +22,11 @@ const mention = (id, author = "alice.example") => ({
   "wm-received": "2026-08-01T10:00:00.000Z",
   "wm-property": "in-reply-to",
   "wm-target": "https://website.example/notes/one/",
-  author: { name: "Alice", url: `https://${author}/`, photo: `https://${author}/p.jpg` },
+  author: {
+    name: "Alice",
+    url: `https://${author}/`,
+    photo: `https://${author}/p.jpg`,
+  },
   url: `https://${author}/reply/${id}`,
   content: { text: "Nice post" },
 });
@@ -37,7 +41,11 @@ const stubFetch = (pages) => {
   let call = 0;
   const fetchMock = mock.fn(async (url) => {
     if (!String(url).includes("webmention.io")) {
-      return { ok: true, headers: { get: () => "text/html" }, text: async () => "" };
+      return {
+        ok: true,
+        headers: { get: () => "text/html" },
+        text: async () => "",
+      };
     }
 
     const children = pages[call] ?? [];
@@ -142,7 +150,11 @@ describe("endpoint-webmention-io/lib/sync", () => {
 
     await runSync(database, options);
 
-    assert.equal(fetchMock.mock.callCount(), 1, "does not ask for a second page");
+    assert.equal(
+      fetchMock.mock.callCount(),
+      1,
+      "does not ask for a second page",
+    );
   });
 
   it("Recovers from a failing request", async () => {

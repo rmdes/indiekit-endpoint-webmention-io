@@ -20,7 +20,11 @@ const cacheCollection = database.collection("webmentionAuthorCache");
  * @param {string} [options.contentType] - Content type header
  * @returns {Function} The mock, for call assertions
  */
-const stubFetch = ({ body = "", ok = true, contentType = "text/html" } = {}) => {
+const stubFetch = ({
+  body = "",
+  ok = true,
+  contentType = "text/html",
+} = {}) => {
   const fetchMock = mock.fn(async () => ({
     ok,
     headers: { get: () => contentType },

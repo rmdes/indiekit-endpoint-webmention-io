@@ -1,14 +1,15 @@
-import express from "express";
-import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-import { dashboardController } from "./lib/controllers/dashboard.js";
-import { blocklistController } from "./lib/controllers/blocklist.js";
-import { syncController } from "./lib/controllers/sync-controller.js";
-import { apiController } from "./lib/controllers/api.js";
-import { startSync, stopSync } from "./lib/sync.js";
 import { waitForReady } from "@rmdes/indiekit-startup-gate";
+import express from "express";
+
 import { WEBMENTION_BLOCKS } from "./lib/blocks.js";
+import { apiController } from "./lib/controllers/api.js";
+import { blocklistController } from "./lib/controllers/blocklist.js";
+import { dashboardController } from "./lib/controllers/dashboard.js";
+import { syncController } from "./lib/controllers/sync-controller.js";
+import { startSync, stopSync } from "./lib/sync.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -22,6 +23,8 @@ const defaults = {
 };
 
 export default class WebmentionEndpoint {
+  _stopGate;
+
   name = "Webmention moderation endpoint";
 
   constructor(options = {}) {
@@ -109,10 +112,9 @@ export default class WebmentionEndpoint {
 
     // Start background sync if database is available
     if (Indiekit.config.application.mongodbUrl) {
-      this._stopGate = waitForReady(
-        () => startSync(Indiekit, this.options),
-        { label: "Webmention.io" },
-      );
+      this._stopGate = waitForReady(() => startSync(Indiekit, this.options), {
+        label: "Webmention.io",
+      });
     }
   }
 

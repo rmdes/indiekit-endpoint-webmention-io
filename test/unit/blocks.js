@@ -12,23 +12,48 @@ const SURFACES = new Set(["homepage", "collection", "postType", "standalone"]);
 const DATA_SOURCES = new Set(["file", "collections", "config", "api"]);
 
 test("WEBMENTION_BLOCKS: exactly the webmentions widget", () => {
-  assert.deepEqual(WEBMENTION_BLOCKS.map((b) => b.id), ["webmentions"]);
+  assert.deepEqual(
+    WEBMENTION_BLOCKS.map((b) => b.id),
+    ["webmentions"],
+  );
 });
 
 test("WEBMENTION_BLOCKS: every entry satisfies the v2 block contract", () => {
   for (const b of WEBMENTION_BLOCKS) {
     assert.ok(KEBAB_ID.test(b.id), `${b.id}: id kebab`);
-    assert.ok(Number.isInteger(b.version) && b.version >= 1, `${b.id}: version >= 1`);
-    assert.ok(typeof b.label === "string" && b.label.length > 0, `${b.id}: label`);
-    assert.ok(Array.isArray(b.placement.regions) && b.placement.regions.length > 0, `${b.id}: regions`);
-    assert.ok(b.placement.regions.every((r) => REGIONS.has(r)), `${b.id}: regions vocab`);
+    assert.ok(
+      Number.isInteger(b.version) && b.version >= 1,
+      `${b.id}: version >= 1`,
+    );
+    assert.ok(
+      typeof b.label === "string" && b.label.length > 0,
+      `${b.id}: label`,
+    );
+    assert.ok(
+      Array.isArray(b.placement.regions) && b.placement.regions.length > 0,
+      `${b.id}: regions`,
+    );
+    assert.ok(
+      b.placement.regions.every((r) => REGIONS.has(r)),
+      `${b.id}: regions vocab`,
+    );
     assert.ok(Array.isArray(b.placement.surfaces), `${b.id}: surfaces array`);
-    assert.ok(b.placement.surfaces.every((s) => SURFACES.has(s)), `${b.id}: surfaces vocab`);
+    assert.ok(
+      b.placement.surfaces.every((s) => SURFACES.has(s)),
+      `${b.id}: surfaces vocab`,
+    );
     assert.ok(DATA_SOURCES.has(b.data.source), `${b.id}: data.source`);
     assert.equal(typeof b.multiple, "boolean", `${b.id}: multiple boolean`);
     assert.equal(b.schema.type, "object", `${b.id}: schema.type`);
-    assert.equal(b.schema.additionalProperties, false, `${b.id}: additionalProperties false`);
-    assert.ok(b.schema.properties && typeof b.schema.properties === "object", `${b.id}: properties`);
+    assert.equal(
+      b.schema.additionalProperties,
+      false,
+      `${b.id}: additionalProperties false`,
+    );
+    assert.ok(
+      b.schema.properties && typeof b.schema.properties === "object",
+      `${b.id}: properties`,
+    );
     assert.ok(!("required" in b.schema), `${b.id}: NO required`);
   }
 });

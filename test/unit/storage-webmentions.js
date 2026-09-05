@@ -126,7 +126,9 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
     });
 
     it("Falls back to the received date when unpublished", () => {
-      const jf2 = documentToJf2(jf2ToDocument(mention({ published: undefined })));
+      const jf2 = documentToJf2(
+        jf2ToDocument(mention({ published: undefined })),
+      );
 
       assert.equal(jf2.published, "2026-08-01T10:00:00.000Z");
     });
@@ -229,8 +231,14 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
       const first = await getWebmentions(collection, { page: 0, perPage: 1 });
       const second = await getWebmentions(collection, { page: 1, perPage: 1 });
 
-      assert.deepEqual(first.items.map((i) => i.wmId), [2]);
-      assert.deepEqual(second.items.map((i) => i.wmId), [1]);
+      assert.deepEqual(
+        first.items.map((i) => i.wmId),
+        [2],
+      );
+      assert.deepEqual(
+        second.items.map((i) => i.wmId),
+        [1],
+      );
       assert.equal(first.total, 2, "total counts every match, not the page");
     });
   });
@@ -315,7 +323,11 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
       const manual = await collection.findOne({ wmId: 3 });
       const blocked = await collection.findOne({ wmId: 2 });
 
-      assert.equal(unhidden, 1, "only the blocklist-hidden mention is restored");
+      assert.equal(
+        unhidden,
+        1,
+        "only the blocklist-hidden mention is restored",
+      );
       assert.equal(manual.hidden, true, "a manual hide survives unblocking");
       assert.equal(blocked.hidden, false);
     });
@@ -356,9 +368,13 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
         }),
       );
 
-      const updated = await updateAuthorDataByDomain(collection, "bob.example", {
-        photoUrl: "https://bob.example/me.jpg",
-      });
+      const updated = await updateAuthorDataByDomain(
+        collection,
+        "bob.example",
+        {
+          photoUrl: "https://bob.example/me.jpg",
+        },
+      );
       const doc = await collection.findOne({ wmId: 2 });
 
       assert.equal(updated, 1);

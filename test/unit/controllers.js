@@ -22,7 +22,12 @@ const blocklist = database.collection("webmentionBlocklist");
  * @param {object|null} [options.db] - Database, or null when unavailable
  * @returns {object} Request
  */
-const mockRequest = ({ query = {}, body = {}, params = {}, db = database } = {}) => ({
+const mockRequest = ({
+  query = {},
+  body = {},
+  params = {},
+  db = database,
+} = {}) => ({
   query,
   body,
   params,
