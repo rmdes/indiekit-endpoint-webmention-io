@@ -390,4 +390,26 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
       );
     });
   });
+
+  it("hides and unhides when handed a URL instead of a hostname", async () => {
+    // The blocklist route passes whatever was stored as the domain, and older
+    // rows hold a full URL. Without normalising here, unblocking such a row
+    // removed the blocklist entry but left the mentions hidden with nothing
+    // left to unblock.
+    await collection.insertOne({
+      wmId: 99_001,
+      sourceDomain: "legacy.example",
+      wmTarget: "https://example.com/post",
+      hidden: false,
+    });
+
+    const hidden = await hideByDomain(collection, "https://legacy.example/x");
+    assert.equal(hidden, 1);
+
+    const unhidden = await unhideByDomain(collection, "https://legacy.example");
+    assert.equal(unhidden, 1);
+
+    const doc = await collection.findOne({ wmId: 99_001 });
+    assert.equal(doc.hidden, false);
+  });
 });
