@@ -106,4 +106,40 @@ describe("endpoint-webmention-io/lib/storage/blocklist", () => {
     assert.ok(result instanceof Set);
     assert.deepEqual([...result].sort(), ["one.example", "two.example"]);
   });
+
+  it("blocking a full URL matches the hostname mentions are stored under", async () => {
+    // The exact failure seen in production: the entry was written as
+    // "https://rmendes.net" while sourceDomain held "rmendes.net", so every
+    // lookup missed and the mentions stayed visible.
+    await blockDomain(collection, "https://rmendes.net", "privacy");
+
+    assert.equal(await isDomainBlocked(collection, "rmendes.net"), true);
+    assert.deepEqual([...(await getBlockedDomainSet(collection))], [
+      "rmendes.net",
+    ]);
+  });
+
+  it("normalises entries written before the fix, on read", async () => {
+    await collection.insertOne({
+      domain: "https://legacy.example",
+      reason: "spam",
+      blockedAt: new Date().toISOString(),
+      mentionsHidden: 0,
+    });
+
+    assert.ok((await getBlockedDomainSet(collection)).has("legacy.example"));
+  });
+
+  it("unblocking clears a legacy entry too", async () => {
+    await collection.insertOne({
+      domain: "https://legacy.example",
+      reason: "spam",
+      blockedAt: new Date().toISOString(),
+      mentionsHidden: 0,
+    });
+
+    await unblockDomain(collection, "legacy.example");
+
+    assert.equal(await isDomainBlocked(collection, "legacy.example"), false);
+  });
 });

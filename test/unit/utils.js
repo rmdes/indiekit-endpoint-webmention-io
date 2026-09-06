@@ -7,6 +7,7 @@ import {
   getMentionType,
   getMentionTitle,
   getAuthorName,
+  normaliseDomain,
   normaliseParagraphs,
   sanitiseHtml,
 } from "../../lib/utils.js";
@@ -128,5 +129,33 @@ describe("endpoint-webmention-io/lib/utils", () => {
   it("Returns null rather than throwing on a value that is not a URL", () => {
     assert.equal(extractDomain("not a url"), null);
     assert.equal(extractDomain(""), null);
+  });
+});
+
+describe("endpoint-webmention-io/lib/utils normaliseDomain", () => {
+  it("reduces a full URL to its hostname", () => {
+    // The moderation forms hand back the author URL, not the hostname the
+    // mention is stored under.
+    assert.equal(normaliseDomain("https://rmendes.net"), "rmendes.net");
+    assert.equal(
+      normaliseDomain("https://rmendes.net/replies/2026/09/06/06da2/"),
+      "rmendes.net",
+    );
+  });
+
+  it("passes a bare hostname through", () => {
+    // extractDomain returns null here, which is why it could not be reused.
+    assert.equal(normaliseDomain("rmendes.net"), "rmendes.net");
+    assert.equal(extractDomain("rmendes.net"), null);
+  });
+
+  it("lowercases and trims", () => {
+    assert.equal(normaliseDomain("  HTTPS://RMendes.NET/  "), "rmendes.net");
+  });
+
+  it("returns null for nothing usable", () => {
+    for (const value of ["", null, undefined, "not a domain"]) {
+      assert.equal(normaliseDomain(value), null);
+    }
   });
 });
