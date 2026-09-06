@@ -30,7 +30,8 @@
       "likes": "Likes",
       "replies": "Replies",
       "reposts": "Reposts",
-      "mentions": "Mentions"
+      "mentions": "Mentions",
+      "quarantine": "Held for review"
     },
     "actions": {
       "hide": "Hide",
@@ -64,12 +65,33 @@
       "removed": "mentions permanently deleted",
       "unhidden": "mentions restored",
       "mentionsHidden": "mentions hidden",
-      "blockedAt": "Blocked"
+      "blockedAt": "Blocked",
+      "statusLabel": "Status",
+      "statusBlocked": "Blocked",
+      "statusQuarantined": "Quarantined",
+      "howItWorks": "What each action does",
+      "howQuarantine": "Quarantine — mentions already published stay visible. Anything new from this domain is kept but held for review, so you can approve it or block the domain once you have seen it. Reversible.",
+      "howBlock": "Block — every mention from this domain is hidden, both those already stored and anything that arrives later. Nothing is deleted, so unblocking restores them. Reversible.",
+      "howPrivacy": "Privacy removal — every mention from this domain is deleted from the database and the domain is listed. This cannot be undone.",
+      "quarantine": {
+        "title": "Quarantine a domain",
+        "description": "For a domain you are unsure about. What it has already sent stays visible; what it sends next waits for your decision in the review queue.",
+        "button": "Quarantine domain",
+        "quarantined": "Domain quarantined. New mentions from it will be held for review.",
+        "promote": "Block",
+        "promoteConfirm": "Block %s? This also hides every mention it has already sent."
+      }
     },
     "counts": {
       "total": "total",
       "hidden": "hidden",
-      "visible": "visible"
+      "visible": "visible",
+      "quarantined": "held for review"
+    },
+    "review": {
+      "empty": "Nothing is waiting for review.",
+      "approve": "Approve",
+      "heldFrom": "Held because %s is quarantined"
     }
   }
 }

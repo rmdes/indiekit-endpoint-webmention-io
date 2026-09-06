@@ -8,6 +8,7 @@ import {
   ensureBlocklistIndexes,
   getBlocklist,
   getBlockedDomainSet,
+  getModerationSets,
   isDomainBlocked,
   unblockDomain,
 } from "../../lib/storage/blocklist.js";
@@ -141,5 +142,42 @@ describe("endpoint-webmention-io/lib/storage/blocklist", () => {
     await unblockDomain(collection, "legacy.example");
 
     assert.equal(await isDomainBlocked(collection, "legacy.example"), false);
+  });
+
+  it("splits the list by what each entry enforces", async () => {
+    await blockDomain(collection, "spam.example", "spam", 0, "blocked");
+    await blockDomain(collection, "unsure.example", "unsure", 0, "quarantined");
+
+    const { blocked, quarantined } = await getModerationSets(collection);
+
+    assert.deepEqual([...blocked], ["spam.example"]);
+    assert.deepEqual([...quarantined], ["unsure.example"]);
+  });
+
+  it("treats an entry with no status as blocked", async () => {
+    // Rows written before quarantine existed carry no status. Counting them
+    // as blocked keeps their behaviour unchanged without a migration.
+    await collection.insertOne({
+      domain: "legacy.example",
+      reason: "spam",
+      blockedAt: new Date().toISOString(),
+      mentionsHidden: 0,
+    });
+
+    const { blocked, quarantined } = await getModerationSets(collection);
+
+    assert.ok(blocked.has("legacy.example"));
+    assert.equal(quarantined.size, 0);
+  });
+
+  it("promoting a quarantined domain moves it to blocked", async () => {
+    await blockDomain(collection, "unsure.example", "unsure", 0, "quarantined");
+    // Re-applying with the block status is what the promote button does.
+    await blockDomain(collection, "unsure.example", "spam", 3, "blocked");
+
+    const { blocked, quarantined } = await getModerationSets(collection);
+
+    assert.ok(blocked.has("unsure.example"));
+    assert.equal(quarantined.size, 0);
   });
 });

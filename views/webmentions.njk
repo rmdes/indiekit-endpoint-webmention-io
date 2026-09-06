@@ -133,6 +133,9 @@
     </span>
     <span class="wm-stats__item">
       <span class="wm-stats__count">{{ counts.total }}</span> {{ __("webmention-io.counts.total") }}
+    </div>
+    <div>
+      <span class="wm-stats__count">{{ counts.quarantined or 0 }}</span> {{ __("webmention-io.counts.quarantined") }}
     </span>
   </div>
 
@@ -162,6 +165,7 @@
     <a href="{{ wmEndpoint }}?filter=all&type={{ typeFilter }}" class="{% if filter == 'all' %}active{% endif %}">{{ __("webmention-io.filter.all") }}</a>
     <a href="{{ wmEndpoint }}?filter=visible&type={{ typeFilter }}" class="{% if filter == 'visible' %}active{% endif %}">{{ __("webmention-io.filter.visible") }}</a>
     <a href="{{ wmEndpoint }}?filter=hidden&type={{ typeFilter }}" class="{% if filter == 'hidden' %}active{% endif %}">{{ __("webmention-io.filter.hidden") }}</a>
+    <a href="{{ wmEndpoint }}?filter=quarantine&type={{ typeFilter }}" class="{% if filter == 'quarantine' %}active{% endif %}">{{ __("webmention-io.filter.quarantine") }}{% if counts.quarantined %} ({{ counts.quarantined }}){% endif %}</a>
   </div>
   <div>
     {{ __("webmention-io.filter.type") }}:

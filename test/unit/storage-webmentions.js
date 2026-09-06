@@ -252,8 +252,48 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
       assert.deepEqual(await getWebmentionCounts(collection), {
         total: 2,
         hidden: 1,
+        quarantined: 0,
         visible: 1,
       });
+    });
+
+    it("counts quarantined separately from hidden", async () => {
+      // Quarantined mentions are a subset of hidden: held for a decision
+      // rather than hidden by a block. The review queue counts on the
+      // distinction.
+      await upsertWebmention(collection, mention({ "wm-id": 10 }));
+      await upsertWebmention(collection, mention({ "wm-id": 11 }), {
+        quarantined: true,
+      });
+
+      const counts = await getWebmentionCounts(collection);
+
+      assert.equal(counts.total, 2);
+      assert.equal(counts.hidden, 1);
+      assert.equal(counts.quarantined, 1);
+      assert.equal(counts.visible, 1);
+    });
+
+    it("a quarantined insert lands hidden, and a later sync leaves it alone", async () => {
+      await upsertWebmention(collection, mention({ "wm-id": 12 }), {
+        quarantined: true,
+      });
+
+      const stored = await collection.findOne({ wmId: 12 });
+      assert.equal(stored.hidden, true);
+      assert.equal(stored.hiddenReason, "quarantine");
+
+      // Approving it must stick: upsert uses $setOnInsert, so re-syncing the
+      // same mention must not hide it again.
+      await collection.updateOne(
+        { wmId: 12 },
+        { $set: { hidden: false, hiddenReason: null } },
+      );
+      await upsertWebmention(collection, mention({ "wm-id": 12 }), {
+        quarantined: true,
+      });
+
+      assert.equal((await collection.findOne({ wmId: 12 })).hidden, false);
     });
 
     it("Gets the highest stored wm-id", async () => {

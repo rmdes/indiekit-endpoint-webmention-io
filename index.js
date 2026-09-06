@@ -74,6 +74,12 @@ export default class WebmentionEndpoint {
     // Block a domain (hides all mentions + adds to blocklist)
     protectedRouter.post("/block", dashboardController.blockDomainHandler);
 
+    // Quarantine a domain (hold future mentions, leave history visible)
+    protectedRouter.post(
+      "/quarantine",
+      dashboardController.quarantineDomainHandler,
+    );
+
     // Unblock a domain
     protectedRouter.post(
       "/blocklist/:domain/delete",
