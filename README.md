@@ -7,7 +7,7 @@ Webmention moderation endpoint for [Indiekit](https://getindiekit.com). Syncs we
 - **Background Sync**: Automatically fetches webmentions from webmention.io every 15 minutes (configurable)
 - **Moderation Dashboard**: Admin UI for hiding/unhiding webmentions
 - **Domain Blocking**: Block spam domains (hides all mentions, blocks future ones)
-- **Privacy Removal**: GDPR-compliant permanent deletion with domain blocking
+- **Privacy Removal**: permanently delete a domain's mentions from this database and block it (webmention.io keeps its own copy)
 - **Public JSON API**: Drop-in replacement for webmention.io API with server-side caching
 - **MongoDB Storage**: Persistent storage with indexes for fast queries
 - **Incremental Sync**: Only fetches new webmentions since last sync (efficient)
@@ -59,7 +59,7 @@ Visit `/webmentions` in your Indiekit admin panel to:
 - Filter by type (likes/replies/reposts/mentions)
 - Hide/unhide individual webmentions
 - Block spam domains
-- Remove mentions for privacy requests (GDPR)
+- Remove mentions for privacy requests (local copy only)
 
 ### Manual Sync
 
@@ -147,14 +147,14 @@ Body: domain=spam.example.com
 - Adds domain to blocklist
 - Future mentions from this domain are filtered during sync
 
-#### Privacy removal (GDPR)
+#### Privacy removal
 ```bash
 POST /webmentions/privacy-remove
 Body: domain=user-request.example.com
 ```
 - **Permanently deletes** all mentions from the domain
 - Adds domain to blocklist with reason="privacy"
-- Irreversible - use for GDPR/privacy requests only
+- Irreversible here; the mention still exists on webmention.io, ask them separately for removal at the source
 
 #### Unblock a domain
 ```bash
