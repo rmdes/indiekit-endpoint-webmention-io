@@ -18,7 +18,7 @@ const cacheCollection = database.collection("webmentionAuthorCache");
  * @param {string} [options.body] - Response body
  * @param {boolean} [options.ok] - Whether the response succeeded
  * @param {string} [options.contentType] - Content type header
- * @returns {Function} The mock, for call assertions
+ * @returns {ReturnType<typeof mock.fn>} The mock, for call assertions
  */
 const stubFetch = ({
   body = "",
@@ -30,7 +30,9 @@ const stubFetch = ({
     headers: { get: () => contentType },
     text: async () => body,
   }));
-  globalThis.fetch = fetchMock;
+  globalThis.fetch = /** @type {typeof fetch} */ (
+    /** @type {unknown} */ (fetchMock)
+  );
   return fetchMock;
 };
 

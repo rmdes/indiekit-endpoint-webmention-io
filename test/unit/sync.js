@@ -35,7 +35,7 @@ const mention = (id, author = "alice.example") => ({
  * Stub `fetch`, routing webmention.io requests to the given pages and any
  * other request (h-card discovery) to an empty page.
  * @param {Array<Array>} pages - Successive pages of entries
- * @returns {Function} The mock, for call assertions
+ * @returns {ReturnType<typeof mock.fn>} The mock, for call assertions
  */
 const stubFetch = (pages) => {
   let call = 0;
@@ -52,7 +52,9 @@ const stubFetch = (pages) => {
     call++;
     return { ok: true, json: async () => ({ children }) };
   });
-  globalThis.fetch = fetchMock;
+  globalThis.fetch = /** @type {typeof fetch} */ (
+    /** @type {unknown} */ (fetchMock)
+  );
   return fetchMock;
 };
 
@@ -169,7 +171,9 @@ describe("endpoint-webmention-io/lib/sync", () => {
   });
 
   it("Reports the error webmention.io returned", async () => {
-    globalThis.fetch = mock.fn(async () => ({ ok: false, status: 401 }));
+    globalThis.fetch = /** @type {typeof fetch} */ (
+      /** @type {unknown} */ (mock.fn(async () => ({ ok: false, status: 401 })))
+    );
 
     const result = await runSync(database, options);
 

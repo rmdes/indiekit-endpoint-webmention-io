@@ -115,9 +115,10 @@ describe("endpoint-webmention-io/lib/storage/blocklist", () => {
     await blockDomain(collection, "https://rmendes.net", "privacy");
 
     assert.equal(await isDomainBlocked(collection, "rmendes.net"), true);
-    assert.deepEqual([...(await getBlockedDomainSet(collection))], [
-      "rmendes.net",
-    ]);
+    assert.deepEqual(
+      [...(await getBlockedDomainSet(collection))],
+      ["rmendes.net"],
+    );
   });
 
   it("normalises entries written before the fix, on read", async () => {
