@@ -172,6 +172,56 @@ describe("endpoint-webmention-io/lib/controllers", () => {
   });
 
   describe("dashboard", () => {
+    it("Escapes third-party values that components render as HTML", async () => {
+      await upsertWebmention(webmentions, {
+        ...mention(1),
+        "wm-target": 'https://website.example/"><img src=x onerror=alert(2)>',
+        author: {
+          name: "<img src=x onerror=alert(1)>",
+          url: "https://alice.example/",
+        },
+        name: "<b onmouseover=alert(3)>Title</b>",
+      });
+      const response = mockResponse();
+
+      await dashboardController.list(mockRequest(), response);
+
+      const [item] = response.view.locals.webmentions;
+      assert.equal(item.user.name, "&lt;img src=x onerror=alert(1)&gt;");
+      assert.equal(item.title, "&lt;b onmouseover=alert(3)&gt;Title&lt;/b&gt;");
+      assert.equal(
+        item["wm-target"],
+        "https://website.example/&quot;&gt;&lt;img src=x onerror=alert(2)&gt;",
+      );
+    });
+
+    it("Makes documents stored by earlier versions safe to show", async () => {
+      const text = "<img src=x onerror=alert(1)>";
+      await webmentions.insertOne({
+        wmId: 9,
+        wmReceived: "2026-08-01T10:00:00.000Z",
+        wmProperty: "in-reply-to",
+        wmTarget: "https://website.example/notes/one/",
+        authorName: "Mallory",
+        authorUrl: "javascript:alert(2)",
+        sourceUrl: "javascript:alert(3)",
+        contentText: text,
+        contentHtml: `<p>${text}</p>`,
+        hidden: false,
+      });
+      const response = mockResponse();
+
+      await dashboardController.list(mockRequest(), response);
+
+      const [item] = response.view.locals.webmentions;
+      assert.equal(
+        item.description.html,
+        "<p>&lt;img src=x onerror=alert(1)&gt;</p>",
+      );
+      assert.equal(item.user.url, undefined);
+      assert.equal(item.url, undefined);
+    });
+
     it("Blocks a domain and hides what it already sent", async () => {
       await upsertWebmention(webmentions, mention(1, "spam.example"));
       const response = mockResponse();

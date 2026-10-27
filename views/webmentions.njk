@@ -210,7 +210,8 @@
 
       {% if item.sourceDomain %}
         <form method="post" action="{{ wmEndpoint }}/block" style="display:inline"
-              onsubmit="return confirm('Block all webmentions from {{ item.sourceDomain }}?')">
+              data-confirm="Block all webmentions from {{ item.sourceDomain }}?"
+              onsubmit="return confirm(this.dataset.confirm)">
           <input type="hidden" name="domain" value="{{ item.sourceDomain }}">
           <button type="submit" class="button button--small button--secondary">{{ __("webmention-io.actions.block") }} {{ item.sourceDomain }}</button>
         </form>

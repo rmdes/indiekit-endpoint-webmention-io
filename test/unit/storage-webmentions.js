@@ -75,6 +75,17 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
       assert.equal(doc.contentText, "Hello");
     });
 
+    it("Escapes plain text content, which is not HTML", () => {
+      const text = "<img src=x onerror=alert(1)> & more";
+      const doc = jf2ToDocument(mention({ content: { text } }));
+
+      assert.equal(
+        doc.contentHtml,
+        "<p>&lt;img src=x onerror=alert(1)&gt; &amp; more</p>",
+      );
+      assert.equal(doc.contentText, text);
+    });
+
     it("Prefers HTML content, sanitised", () => {
       const doc = jf2ToDocument(
         mention({ content: { html: "<p>Hi</p><script>x()</script>" } }),
@@ -95,6 +106,23 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
       const doc = jf2ToDocument(mention({ "wm-received": undefined }));
 
       assert.ok(Date.parse(doc.wmReceived));
+    });
+
+    it("Drops author and source URLs that are not http(s)", () => {
+      const doc = jf2ToDocument(
+        mention({
+          author: {
+            name: "Mallory",
+            url: "javascript:alert(1)",
+            photo: "data:text/html,x",
+          },
+          url: " JaVaScRiPt:alert(2)",
+        }),
+      );
+
+      assert.equal(doc.authorUrl, null);
+      assert.equal(doc.authorPhoto, null);
+      assert.equal(doc.sourceUrl, null);
     });
   });
 
@@ -131,6 +159,40 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
       );
 
       assert.equal(jf2.published, "2026-08-01T10:00:00.000Z");
+    });
+
+    it("Makes documents stored by earlier versions safe to serve", () => {
+      // Shaped as earlier versions stored them: text wrapped unescaped, URLs
+      // kept whatever their scheme
+      const text = "<img src=x onerror=alert(1)>";
+      const jf2 = documentToJf2({
+        wmId: 9,
+        wmReceived: "2026-08-01T10:00:00.000Z",
+        authorUrl: "javascript:alert(2)",
+        authorPhoto: "https://alice.example/photo.jpg",
+        sourceUrl: "javascript:alert(3)",
+        contentText: text,
+        contentHtml: `<p>${text}</p>`,
+      });
+
+      assert.equal(
+        jf2.content.html,
+        "<p>&lt;img src=x onerror=alert(1)&gt;</p>",
+      );
+      assert.equal(jf2.content.text, text);
+      assert.equal(jf2.author.url, "");
+      assert.equal(jf2.author.photo, "https://alice.example/photo.jpg");
+      assert.equal(jf2.url, "");
+    });
+
+    it("Leaves sanitised HTML content as it is", () => {
+      const jf2 = documentToJf2(
+        jf2ToDocument(
+          mention({ content: { html: "<p>Hi <b>there</b></p>", text: "Hi" } }),
+        ),
+      );
+
+      assert.equal(jf2.content.html, "<p>Hi <b>there</b></p>");
     });
   });
 
@@ -428,6 +490,29 @@ describe("endpoint-webmention-io/lib/storage/webmentions", () => {
         await updateAuthorDataByDomain(collection, "alice.example", {}),
         0,
       );
+    });
+
+    it("Ignores h-card URLs that are not http(s)", async () => {
+      await upsertWebmention(
+        collection,
+        mention({
+          "wm-id": 3,
+          author: { name: "Eve", url: "https://eve.example/" },
+        }),
+      );
+
+      const updated = await updateAuthorDataByDomain(
+        collection,
+        "eve.example",
+        {
+          photoUrl: "javascript:alert(1)",
+          authorUrl: "javascript:alert(2)",
+        },
+      );
+      const doc = await collection.findOne({ wmId: 3 });
+
+      assert.equal(updated, 0);
+      assert.equal(doc.authorPhoto, null);
     });
   });
 
